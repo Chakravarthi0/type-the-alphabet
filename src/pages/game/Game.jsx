@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import MovingComponent from "react-moving-text";
 import { PrimaryButton } from "../../components";
 import { useGame } from "../../hooks";
+import { formatNumber } from "../../utils";
 
 function Game() {
   const { gameState, resetGame, updateHighScore, incrementAlphabetIndex } =
@@ -36,7 +37,7 @@ function Game() {
         event.target.value.slice(-1).toLowerCase() ===
         alphabets[alphabetIndex].toLowerCase()
       ) {
-        if (alphabetIndex === 18) {
+        if (alphabetIndex === 19) {
           stopTimer();
           if (
             (highScore.milliSec === 0 &&
@@ -49,7 +50,6 @@ function Game() {
         }
         incrementAlphabetIndex();
       } else {
-        console.log("err");
         setShowPenalty(true);
         setTimeout(() => {
           setShowPenalty(false);
@@ -72,7 +72,6 @@ function Game() {
               newState.min = prev.min + 1;
             }
           }
-          console.log(newState);
 
           return newState;
         });
@@ -102,17 +101,13 @@ function Game() {
         } else {
           newState.milliSec = prev.milliSec + 1;
         }
-        console.log(newState);
 
         return newState;
       });
     }, 10);
-
-    console.log(timerID.current);
   };
 
   const stopTimer = () => {
-    console.log(timerID.current);
     clearTimeout(timerID.current);
   };
 
@@ -129,14 +124,14 @@ function Game() {
       <p className="mt-4 text-lg">
         Typing game to see how fast you type. Timer starts when you do :)
       </p>
-      <div className="h-[10rem] w-[90%] max-w-[400px] mx-auto my-10 bg-white rounded-xl">
-        <p className="text-[100px] text-green-700">
+      <div className="h-[8.5rem] w-[90%] max-w-[400px] mx-auto my-10 bg-white rounded-xl">
+        <p className="text-[80px] text-green-700">
           {alphabetIndex <= 19 ? (
             alphabets[alphabetIndex]
           ) : highScore.overAllMilliseconds >= time.overAllMilliseconds ? (
             "Success"
           ) : (
-            <p className="text-red-500">Failure</p>
+            <span className="text-red-500">Failure</span>
           )}
         </p>
       </div>
@@ -144,8 +139,7 @@ function Game() {
       <div className="flex items-center w-[180px] m-auto gap-x-2">
         <p className="text-xl font-medium">
           Time: {time.min > 0 && `${time.min}:`}
-          {time.sec <= 9 ? `0${time.sec}` : `${time.sec}`}:
-          {time.milliSec <= 9 ? `0${time.milliSec}` : time.milliSec}s
+          {formatNumber(time.sec)}:{formatNumber(time.milliSec)}s
         </p>
 
         {showPenalty && (
@@ -167,18 +161,15 @@ function Game() {
 
       <p className="text-lg mt-4 mr-3">
         My best time:
-        {console.log("hig ", highScore)}
         {highScore.milliSec === 0 && highScore.sec === 0 && highScore.min === 0
           ? "N/A"
           : highScore.min > 0
-          ? `${highScore.min <= 9 ? `0${highScore.min}` : `${highScore.min}`}:${
-              highScore.sec <= 9 ? `0${highScore.sec}` : `${highScore.sec}`
-            }:${
-              highScore.milliSec <= 9
-                ? `0${highScore.millisec}`
-                : `${highScore.millisec}`
-            }s`
-          : `${highScore.sec}:${highScore.milliSec}s`}
+          ? `${formatNumber(highScore.min)}:${formatNumber(
+              highScore.sec
+            )}:${formatNumber(highScore.milliSec)}s`
+          : `${formatNumber(highScore.sec)}:${formatNumber(
+              highScore.milliSec
+            )}s`}
       </p>
 
       <div className="mt-5">
